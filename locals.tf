@@ -30,7 +30,7 @@ locals {
     "app-sg" = {
       vpc_id      = local.vpc.vpc_id
       description = "Bastion Security Group"
-      ingress_with_cidr_blocks = [ // to be deleted later when ENI of the public subnet is deleted
+      ingress_with_cidr_blocks = [
         {
           description = "allow SSH from all"
           from_port   = 22
@@ -56,7 +56,6 @@ locals {
         },
       ]
       tags = {
-        Application = "Odoo"
         Environment = "Production"
       }
       egress_with_cidr_blocks = local.egress_rules

@@ -13,6 +13,10 @@ module "sgs" {
 
 
   egress_with_cidr_blocks = lookup(each.value, "egress_with_cidr_blocks", [])
+
+  tags = merge(lookup(each.value, "tags", {}), {
+    Name = each.key
+  })
 }
 locals {
   sgs_rules_structured = flatten([
