@@ -21,7 +21,7 @@ module "sgs" {
 locals {
   sgs_rules_structured = flatten([
     for sg_key, sg in local.sgs : [
-      for ingress_rule in lookup(sg, "ingress_with_source_security_group", []) : {
+      for rule_idx, ingress_rule in lookup(sg, "ingress_with_source_security_group", []) : {
         sg_key      = sg_key
         description = ingress_rule.description
         from_port   = ingress_rule.from_port
@@ -31,16 +31,18 @@ locals {
         # Either key or id can be passed
         source_sg_key = try(ingress_rule.source_security_group_key, null)
         source_sg_id  = try(ingress_rule.source_security_group_id, null)
+
+        rule_identifier = "${sg_key}-${ingress_rule.protocol}-${ingress_rule.from_port}-${ingress_rule.to_port}-${coalesce(try(ingress_rule.source_security_group_key, null), try(ingress_rule.source_security_group_id, null))}"
       }
     ]
   ])
 }
 module "sgs_rules" {
-  source = "terraform-aws-security-group-master"
+  source  = "terraform-aws-security-group-master"
 
   for_each = {
-    for idx, rule in local.sgs_rules_structured :
-    "${rule.sg_key}-${rule.from_port}-${rule.to_port}-${idx}" => rule
+    for rule in local.sgs_rules_structured :
+    rule.rule_identifier => rule
   }
 
   create_sg = false
@@ -60,4 +62,6 @@ module "sgs_rules" {
       protocol    = each.value.protocol
     }
   ]
+
+  depends_on = [module.sgs]
 }
