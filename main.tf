@@ -1,6 +1,7 @@
 # Security groups
 module "sgs" {
-  source = "terraform-aws-security-group-master"
+  source  = "terraform-aws-security-group-master"
+  version = "5.3.0"
 
   for_each = local.sgs
 
@@ -39,6 +40,7 @@ locals {
 }
 module "sgs_rules" {
   source  = "terraform-aws-security-group-master"
+  version = "5.3.0"
 
   for_each = {
     for rule in local.sgs_rules_structured :
