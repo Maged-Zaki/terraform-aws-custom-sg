@@ -10,7 +10,7 @@ module "sgs" {
   ingress_cidr_blocks      = lookup(each.value, "ingress_cidr_blocks", [])
   ingress_with_cidr_blocks = lookup(each.value, "ingress_with_cidr_blocks", [])
   ingress_rules            = lookup(each.value, "ingress_rules", [])
-
+  use_name_prefix          = false
 
   egress_with_cidr_blocks = lookup(each.value, "egress_with_cidr_blocks", [])
 
